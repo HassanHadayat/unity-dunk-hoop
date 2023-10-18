@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI pointsText;
 
     public HoopController hoopController;
-    //public BallSpawner ballSpawner;
+    public BallSpawner ballSpawner;
 
     public float speedFactor = 10f;
     public int points = 0;
@@ -28,16 +28,30 @@ public class GameManager : MonoBehaviour
         points = 0;
         pointsText.text = points.ToString();
     }
+    public void DisableEffects()
+    {
+        // Deactivate the ball VFX
+        hoopStreak = 1;
+        ballSpawner.BallStreakVFX(hoopStreak);
+    }
     public void ScorePoint(bool isPerfectHoop)
     {
         if (isPerfectHoop)
         {
             hoopStreak++;
             hoopController.ShowStreakVFX();
+            ballSpawner.BallStreakVFX(hoopStreak);
         }
         else
         {
-            hoopStreak = 1;
+            if (hoopStreak > 1)
+            {
+                // Deactivate the ball VFX
+                hoopStreak = 1;
+                ballSpawner.BallStreakVFX(hoopStreak);
+            }
+            else
+                hoopStreak = 1;
         }
 
 
@@ -47,10 +61,9 @@ public class GameManager : MonoBehaviour
         int postPoints = points;
 
         int diff = postPoints - prePoints;
-        int rem = 10- (prePoints % 10);
-        if(diff > rem || postPoints%10 == 0)
+        int rem = 10 - (prePoints % 10);
+        if (diff > rem || postPoints % 10 == 0)
         {
-            Debug.Log("Pre Points = " + prePoints + "  , Post Points = " + postPoints + "\nDiff = " + diff + "\nRem = " + rem);
             RecalculateSpeed();
         }
     }

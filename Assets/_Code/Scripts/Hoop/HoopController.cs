@@ -18,6 +18,8 @@ public class HoopController : MonoBehaviour
     }
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
         if (Input.touchCount > 0)
         {
             currTouch = Input.GetTouch(0);
@@ -26,7 +28,6 @@ public class HoopController : MonoBehaviour
                 float deltaX = currTouch.deltaPosition.x;
 
                 Vector3 newPos = transform.position;
-                //newPos.x += deltaX * testingSpeed;
                 newPos.x += deltaX * Time.fixedDeltaTime * initialHorizontalSpeed;
                 newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
                 transform.position = newPos;
