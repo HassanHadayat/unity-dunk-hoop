@@ -1,3 +1,4 @@
+using PathCreation;
 using System.Collections;
 using UnityEngine;
 
@@ -10,14 +11,14 @@ public class BallSpawner : MonoBehaviour
     public Transform instantiateTrans;
     public float time;
     public int pointsCheckpoint = 50;
+    private int speedCheckpoint = 20;
+    public float ballSpawningDelay = 2f;
     private bool isShootingContinously = false;
 
     public Transform dynamicTrans;
 
     public float minInstantiateX;
     public float maxnInstantiateX;
-
-    public float gravity = -9.81f;
 
     public GameObject[] ballsPool;
     private int ballsPoolIndex = 0;
@@ -34,12 +35,23 @@ public class BallSpawner : MonoBehaviour
     public GameObject normalBG;
     public GameObject fireBG;
 
+    public PathCreator pathCreator;
+
     private void Start()
     {
+        if (pathCreator)
+        {
+            Debug.Log("GOOD START");
+        }
+        else
+        {
+            Debug.Log("BAD START");
+        }
+
         // Prepar the Balls Pool
         InstantiateBallsPool();
 
-        InvokeRepeating("ShootBall", 2f, 1f);
+        InvokeRepeating("ShootBall", 1f, ballSpawningDelay);
     }
     //private void Update()
     //{
@@ -81,7 +93,6 @@ public class BallSpawner : MonoBehaviour
 
         int ShootCounter = 3;
         float randInstantiatePosX = Random.Range(minInstantiateX, maxnInstantiateX);
-        float randEndPosX = Random.Range(-1f, 1f);
         while (ShootCounter > 0)
         {
 
@@ -90,33 +101,27 @@ public class BallSpawner : MonoBehaviour
                 ballsPoolIndex = 0;
             }
             GameObject ball = ballsPool[ballsPoolIndex++];
-            Vector3 newPos = instantiateTrans.position;
-            newPos.x = randInstantiatePosX;
-            ball.transform.position = newPos;
 
-            Vector3 instantiatePos = newPos;
-            Vector3 endPos = hoopParentTrans.position;
-            endPos.x = Random.Range(-1f, 1f);
+            ball.GetComponent<Ball>().m_parent.transform.position = instantiateTrans.position;
 
-            Vector3 displacement = endPos - instantiatePos;
-            float displacementZ = displacement.z;
-            float displacementY = displacement.y;
+            if (GameManager.Instance.points >= speedCheckpoint)
+            {
+                speedCheckpoint += 20;
+                ballSpawningDelay -= 0.2f;
+                ballSpawningDelay = Mathf.Clamp(ballSpawningDelay, 1f, 2f);
 
-            // Calculate initial horizontal velocity
-            float initialVelocityZ = displacementZ / (time);
+                ball.GetComponent<Ball>().ResetPosition(pathCreator, Vector3.right * randInstantiatePosX, 0.5f);
+                CancelInvoke("ShootBall");
+                InvokeRepeating("ShootBall", 1f, ballSpawningDelay);
 
-            // Calculate initial vertical velocity
-            float initialVelocityY = (displacementY - (0.5f * gravity * time * time)) / time;
+            }
+            else
+            {
 
-            // Apply the calculated initial velocity to the Rigidbody
-            Rigidbody rb = ball.GetComponent<Rigidbody>();
-            rb.velocity = new Vector3(0f, initialVelocityY, initialVelocityZ);
+                ball.GetComponent<Ball>().ResetPosition(pathCreator, Vector3.right * randInstantiatePosX);
+            }
 
-            ball.GetComponent<Ball>().m_body.transform.Rotate(Random.insideUnitCircle, 0.5f);
-            rb.AddTorque(Vector3.right, ForceMode.Impulse);
-
-
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.15f);
 
             ShootCounter--;
         }
@@ -128,31 +133,12 @@ public class BallSpawner : MonoBehaviour
         {
             ballsPoolIndex = 0;
         }
+
+
         GameObject ball = ballsPool[ballsPoolIndex++];
-        Vector3 newPos = instantiateTrans.position;
-        newPos.x = Random.Range(minInstantiateX, maxnInstantiateX);
-        ball.transform.position = newPos;
 
-        Vector3 instantiatePos = newPos;
-        Vector3 endPos = hoopParentTrans.position;
-        endPos.x = Random.Range(-1f, 1f);
-
-        Vector3 displacement = endPos - instantiatePos;
-        float displacementZ = displacement.z;
-        float displacementY = displacement.y;
-
-        // Calculate initial horizontal velocity
-        float initialVelocityZ = displacementZ / (time);
-
-        // Calculate initial vertical velocity
-        float initialVelocityY = (displacementY - (0.5f * gravity * time * time)) / time;
-
-        // Apply the calculated initial velocity to the Rigidbody
-        Rigidbody rb = ball.GetComponent<Rigidbody>();
-        rb.velocity = new Vector3(0f, initialVelocityY, initialVelocityZ);
-
-        ball.GetComponent<Ball>().m_body.transform.Rotate(Random.insideUnitCircle, 0.5f);
-        rb.AddTorque(Vector3.right, ForceMode.Impulse);
+        ball.GetComponent<Ball>().m_parent.transform.position = instantiateTrans.position;
+        ball.GetComponent<Ball>().ResetPosition(pathCreator, Vector3.right * Random.Range(minInstantiateX, maxnInstantiateX));
     }
 
     public void BallStreakVFX(int hoopStreak)

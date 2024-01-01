@@ -113,7 +113,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &1137421609
 MonoBehaviour:
@@ -129,11 +129,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCollided: 0
   isTriggered: 0
+  m_parent: {fileID: 3648674878414881263}
   m_body: {fileID: 3472651169860214143}
   m_particleSystemGO: {fileID: 7031452191541284154}
   m_rigidbody: {fileID: 1137421607}
   m_meshRenderer: {fileID: 3472651169860215426}
   m_particleSystem: {fileID: 4420327394858188580}
+  pathCreator: {fileID: 0}
+  speed: 10
 --- !u!1 &3648674878414881263
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,7 +1147,7 @@ ParticleSystem:
     curve:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 1
+      scalar: 0.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2

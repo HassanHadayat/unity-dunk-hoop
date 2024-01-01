@@ -98,5 +98,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startScale: 0.25
-  endScale: 0.6
-  scaleSpeed: 0.7
+  endScale: 0.35
+  scaleSpeed: 0.5
