@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
+
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
@@ -70,15 +72,15 @@ public class GameManager : MonoBehaviour
 
     private void RecalculateSpeed()
     {
-        Time.timeScale += (1 / speedFactor);
+        //Time.timeScale += (1 / speedFactor);
         if (Time.timeScale > 2)
         {
-            Time.timeScale = 2f;
+            //Time.timeScale = 2f;
 
         }
         else
         {
-            hoopController.horizontalSpeed -= (hoopController.initialHorizontalSpeed / speedFactor);
+            //hoopController.horizontalSpeed -= (hoopController.initialHorizontalSpeed / speedFactor);
 
         }
 
